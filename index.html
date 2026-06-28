@@ -194,7 +194,7 @@ function hitungRegulaFalsi() {
     if (a_awal > b_awal) {
         [a_awal, b_awal] = [b_awal, a_awal];
     }
-    
+
     const tol = parseFloat(tolInput);
 
     let fa_awal, fb_awal;
@@ -202,7 +202,7 @@ function hitungRegulaFalsi() {
     try { fb_awal = evaluasiFungsi(fungsiRaw, b_awal); } catch (e) { cetakLaporan("GAGAL DI AWAL", `Batas atas b = ${b_awal} bermasalah.`); return; }
 
     if (fa_awal * fb_awal >= 0) {
-        cetakLaporan("GAGAL DI AWAL (TEOREMA NILAI ANTARA)", `f(${a_awal}) = ${fa_awal.toFixed(4)} dan f(${b_awal}) = ${fb_awal.toFixed(4)} MEMILIKI TANDA YANG SAMA.`);
+        cetakLaporan("GAGAL DI AWAL (TEOREMA NILAI ANTARA)", `f(${a_awal}) = ${fa_awal.toFixed(6)} dan f(${b_awal}) = ${fb_awal.toFixed(6)} MEMILIKI TANDA YANG SAMA.`);
         return;
     }
 
@@ -216,7 +216,7 @@ function hitungRegulaFalsi() {
         if (Math.abs(fb - fa) < 1e-15) { pesanGagalTengah = "Pembagian dengan nol pada rumus."; break; }
         
         c = b - (fb * (b - a)) / (fb - fa);
-        try { fc = evaluasiFungsi(fungsiRaw, c); } catch (e) { pesanGagalTengah = `Titik c = ${c.toFixed(4)} error.`; break; }
+        try { fc = evaluasiFungsi(fungsiRaw, c); } catch (e) { pesanGagalTengah = `Titik c = ${c.toFixed(6)} error.`; break; }
 
         dataIterasi.push({ iterasi: i, a: a, b: b, c: c, fa: fa, fb: fb, fc: fc, abs_fc: Math.abs(fc) });
         
@@ -254,7 +254,7 @@ function hitungRegulaFalsi() {
     }
 
     let dataKurva = [], dataBintangAkar = [], dataBulatanProses = [];
-    let langkah = (xMax - xMin) / 100;
+    let langkah = (xMax - xMin) / 1000;
     for (let k = xMin; k <= xMax; k += langkah) {
         try { dataKurva.push({x: k, y: evaluasiFungsi(fungsiRaw, k)}); } catch(e){}
     }
@@ -273,7 +273,15 @@ function hitungRegulaFalsi() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { x: { type: 'linear', position: 'bottom' } },
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                },
+                y: {
+                    grace: '10%'
+                }
+            },
             plugins: {
                 annotation: {
                     annotations: {
@@ -296,13 +304,13 @@ function hitungRegulaFalsi() {
         <tbody>`;
     dataIterasi.forEach(row => {
         htmlTabel += `<tr>
-            <td>${row.iterasi}</td><td>${row.a.toFixed(5)}</td><td>${row.b.toFixed(5)}</td>
-            <td class="fw-bold text-danger">${row.c.toFixed(5)}</td><td>${row.fa.toFixed(5)}</td>
-            <td>${row.fb.toFixed(5)}</td><td>${row.fc.toFixed(5)}</td>
+            <td>${row.iterasi}</td><td>${row.a.toFixed(6)}</td><td>${row.b.toFixed(6)}</td>
+            <td class="fw-bold text-danger">${row.c.toFixed(6)}</td><td>${row.fa.toFixed(6)}</td>
+            <td>${row.fb.toFixed(6)}</td><td>${row.fc.toFixed(6)}</td>
         </tr>`;
     });
     htmlTabel += `</tbody></table>`;
-    document.getElementById("tabel-container").innerHTML = htmlTabel;
+    document.getElementById("tabel-container").innerHTML = htmlTabel;x
 }
 </script>
 
