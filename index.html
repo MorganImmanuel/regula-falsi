@@ -156,10 +156,10 @@ function evaluasiFungsi(fungsiRaw, x) {
     str = str.replace(/(\d+)([a-zA-Z_])/g, "$1*$2");
     str = str.replace(/(\d+)\(/g, "$1*(");
 
-    const kodeEvaluasi = new Function('x', `return ${str};`);
-    let hasil = kodeEvaluasi(x);
-    if (isNaN(hasil) || !isFinite(hasil)) throw new Error("DomainError");
-    return hasil;
+        const kodeEvaluasi = new Function('x', `return ${str};`);
+        let hasil = kodeEvaluasi(x);
+        if (isNaN(hasil) || !isFinite(hasil)) throw new Error("DomainError");
+        return hasil;
 }
 
 function cetakLaporan(status, keterangan) {
@@ -187,8 +187,14 @@ function hitungRegulaFalsi() {
         return;
     }
 
-    const a_awal = parseFloat(aAwalInput);
-    const b_awal = parseFloat(bAwalInput);
+    let a_awal = parseFloat(aAwalInput);
+    let b_awal = parseFloat(bAwalInput);
+
+    // Tukar jika user memasukkan interval terbalik
+    if (a_awal > b_awal) {
+        [a_awal, b_awal] = [b_awal, a_awal];
+    }
+    
     const tol = parseFloat(tolInput);
 
     let fa_awal, fb_awal;
@@ -202,7 +208,7 @@ function hitungRegulaFalsi() {
 
     let a = a_awal, b = b_awal;
     let dataIterasi = [];
-    let maxIter = 10000000, statusSukses = false, pesanGagalTengah = "";
+    let maxIter = 10000, statusSukses = false, pesanGagalTengah = "";
     let c, fc, i;
 
     for (i = 1; i <= maxIter; i++) {
@@ -228,10 +234,24 @@ function hitungRegulaFalsi() {
 
     const ctx = document.getElementById('grafikChart').getContext('2d');
 
-    let margin = (b_awal - a_awal) * 0.2;
-    let xMin = a_awal - margin;
-    let xMax = b_awal + margin;
-    if (fungsiRaw.toLowerCase().includes("ln") || fungsiRaw.toLowerCase().includes("log")) xMin = Math.max(0.1, xMin);
+    // Tentukan batas kiri dan kanan terlebih dahulu
+    let kiri = Math.min(a_awal, b_awal);
+    let kanan = Math.max(a_awal, b_awal);
+
+    // Margin grafik
+    let margin = (kanan - kiri) * 0.2;
+
+    // Jika a == b, beri margin default
+    if (margin === 0) margin = 1;
+
+    let xMin = kiri - margin;
+    let xMax = kanan + margin;
+
+    // Untuk logaritma
+    if (fungsiRaw.toLowerCase().includes("ln") ||
+        fungsiRaw.toLowerCase().includes("log")) {
+        xMin = Math.max(0.1, xMin);
+    }
 
     let dataKurva = [], dataBintangAkar = [], dataBulatanProses = [];
     let langkah = (xMax - xMin) / 100;
